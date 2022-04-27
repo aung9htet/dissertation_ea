@@ -1,7 +1,7 @@
 import numpy as np
 
 # fitness calculation of candidate solution for two max
-def fitness_calculation(candidate):
+def fitness_calculation_twomax(candidate):
     result_one = 0 #all ones
     for i in candidate:
         result_one += int(i)
@@ -11,7 +11,7 @@ def fitness_calculation(candidate):
 
 # check if the fitness is of the desired solution
 # the solution should fine both optima of the two max
-def fitness(candidate, local_opt):
+def fitness_twomax(candidate, local_opt):
     
     #calculate result
     result_one = 0
@@ -39,19 +39,19 @@ def test_fitness_calculation():
     candidate1 = "0000000000000000"
     candidate2 = "1010101010101010"
     candidate3 = "1111111111111111"
-    assert fitness_calculation(candidate1) == 16; "Should be 16"
-    assert fitness_calculation(candidate2) == 8; "Should be 8"
-    assert fitness_calculation(candidate3) == 16; "Should be 16"
+    assert fitness_calculation_twomax(candidate1) == 16; "Should be 16"
+    assert fitness_calculation_twomax(candidate2) == 8; "Should be 8"
+    assert fitness_calculation_twomax(candidate3) == 16; "Should be 16"
 
 def test_fitness():
     candidate1 = "0000000000000000"
     candidate2 = "1010101010101010"
     candidate3 = "1111111111111111"
-    termination_condition, local_opt = fitness(candidate1, 2)
+    termination_condition, local_opt = fitness_twomax(candidate1, 2)
     assert termination_condition == True; "Should be true"
-    termination_condition, local_opt = fitness(candidate2, 0)
+    termination_condition, local_opt = fitness_twomax(candidate2, 0)
     assert termination_condition == False; "Should be false"
-    termination_condition, local_opt = fitness(candidate3, 1)
+    termination_condition, local_opt = fitness_twomax(candidate3, 1)
     assert termination_condition == True; "Should be true"
     
 if __name__ == "__main__":
