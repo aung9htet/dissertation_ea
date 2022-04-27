@@ -1,17 +1,20 @@
 import numpy as np
 
+# calculate fitness of candidates for one max
 def fitness_calculation_onemax(candidate):
     result = 0
     for i in candidate:
         result += int(i)
     return result
 
+# calculate if the candidates are of the desired fitness
 def fitness_onemax(candidate):
     if (fitness_calculation_onemax(candidate) == len(candidate)):
         return True
     else:
         return False
 
+# test cases
 def test_fitness_calculation():
     candidate1 = "0000000000000000"
     candidate2 = "1010101010101010"
