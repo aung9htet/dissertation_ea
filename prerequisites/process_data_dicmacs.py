@@ -16,8 +16,6 @@ def process_satlib(select_lib):
         max_clause = 1073
     else:
         return cnf_lst
-    
-    number_of_files = len(os.listdir(directory))
   
     # string manipulation to get the clauses part only
     for file in os.listdir(directory):

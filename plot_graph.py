@@ -29,6 +29,10 @@ def plot_graph(select_method, select_benchmark):
                 control_y = np.append(control_y, control_value)
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
+        
+        elif (select_benchmark == "maxsat"):
+            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
 
     # for opt ia with static hyper mutation operator
     elif (select_method == "opt_ia"):
@@ -53,6 +57,10 @@ def plot_graph(select_method, select_benchmark):
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
 
+        elif (select_benchmark == "maxsat"):
+            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
+
     # for symmetric mexpoHD
     elif (select_method == "symmetric_mexpoHD"):
 
@@ -75,6 +83,10 @@ def plot_graph(select_method, select_benchmark):
                 control_y = np.append(control_y, control_value)
             control_label = "$n^{3/2}$logn"
             x_axis = np.arange(5, len(y_axis)+5)
+        
+        elif (select_benchmark == "maxsat"):
+            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
 
     elif (select_method == "ea"):
 
@@ -97,13 +109,22 @@ def plot_graph(select_method, select_benchmark):
                 control_y = np.append(control_y, control_value)
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
+        
+        elif (select_benchmark == "maxsat"):
+            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
 
-
-    plt.xlabel("number of bits")
-    plt.ylabel("run time by number of evaluations")
-    plt.plot(x_axis,y_axis, label = test_label)
-    plt.plot(x_axis,control_y, label = control_label)
-    plt.legend()
+    if (select_benchmark == "maxsat"):
+        plt.xlabel("run time")
+        plt.ylabel("optimum found")
+        plt.plot(x_axis, y_axis, label = select_method)
+        plt.legend
+    else:
+        plt.xlabel("number of bits")
+        plt.ylabel("run time by number of evaluations")
+        plt.plot(x_axis,y_axis, label = test_label)
+        plt.plot(x_axis,control_y, label = control_label)
+        plt.legend()
     file = "plotted_results/"
     file += select_method + "_" + select_benchmark
     plt.savefig(file, dpi=300, bbox_inches = "tight")
@@ -119,4 +140,6 @@ if __name__ == "__main__":
     plot_graph("opt_ia", "onemax")
     plt.figure()
     plot_graph("ea", "onemax")
+    plt.figure()
+    plot_graph("rls", "maxsat")
     
