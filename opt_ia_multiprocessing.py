@@ -113,9 +113,8 @@ def opt_ia_multiprocessing(n, c, benchmark_func, repeat, core = 6):
     result = 0
 
     # multiprocess the results
-    pool = multiprocessing.Pool(core)
     prepare_data = process_input_data(n, c, benchmark_func, repeat)
-    with pool as p:
+    with multiprocessing.Pool(core) as pool:
         resultList = pool.map(opt_ia, prepare_data)
     
     # process list of results obtained
@@ -149,4 +148,4 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True):
 
 # to run the desired code
 if __name__ == "__main__":
-    get_data(40, 1, 100)
+    get_data(50, 1, 100)

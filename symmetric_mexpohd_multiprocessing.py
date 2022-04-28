@@ -91,6 +91,7 @@ def fitness_calculation(x, i):
 
 # the benchmark func has the following meaning. 0 is for onemax and 1 for twomax.
 # this can also be updated in the fitness and fitness_calculation method to add on more benchmark functions.
+# opt ia with symmetric mexpoHD and ageing applied to it
 def immune_algorithm(input_data):
     
     # set input data
@@ -165,7 +166,7 @@ def process_input_data(n, c, benchmark_func, repeat):
     
     return input_data_lst
 
-# symmetric mexpoHD method single core      
+# symmetric mexpoHD method single core
 def symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat):
     result = 0
     prepare_data = [n, c, benchmark_func]
@@ -179,9 +180,8 @@ def symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 6):
     result = 0
 
     # multiprocess the results
-    pool = multiprocessing.Pool(core)
     prepare_data = process_input_data(n, c, benchmark_func, repeat)
-    with pool as p:
+    with multiprocessing.Pool(core) as pool:
         resultList = pool.map(immune_algorithm, prepare_data)
     
     # process list of results obtained
@@ -201,7 +201,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True):
         else:
             run_time = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat)
         run_time_lst = np.append(run_time_lst, run_time)
-        #To check progress
+        # to check progress
         sys.stdout.write(f"\r{' '*100}\r")
         sys.stdout.flush()
         sys.stdout.write('Currently working on ' + str(n) + 'th' + ' bit out of ' + str(max_bit) + ' bits')
@@ -215,4 +215,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True):
 
 # to run the desired code
 if __name__ == "__main__":
-    get_data(40, 1, 100)
+    print("Starting Onemax for Symmetric MexpoHD")
+    get_data(50, 1, 100)
+    print("\n" + "Starting Twomax for Symmetric MexpoHD")
+    get_data(50, 1, 100, 1)

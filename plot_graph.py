@@ -71,9 +71,9 @@ def plot_graph(select_method, select_benchmark):
             control_y = np.array([])
             y_axis = np.load('results/symmetric_mexpoHD_twomax_results.npy')
             for n in range(5, len(y_axis)+5):
-                control_value = np.log(n) * n
+                control_value = np.log(n) * np.power(n, 3/2)
                 control_y = np.append(control_y, control_value)
-            control_label = "nlogn"
+            control_label = "$n^{3/2}$logn"
             x_axis = np.arange(5, len(y_axis)+5)
 
     elif (select_method == "ea"):
@@ -109,5 +109,14 @@ def plot_graph(select_method, select_benchmark):
     plt.savefig(file, dpi=300, bbox_inches = "tight")
 
 if __name__ == "__main__":
+    plt.figure()
     plot_graph("symmetric_mexpoHD", "onemax")
+    plt.figure()
+    plot_graph("symmetric_mexpoHD", "twomax")
+    plt.figure()
+    plot_graph("rls", "onemax")
+    plt.figure()
+    plot_graph("opt_ia", "onemax")
+    plt.figure()
+    plot_graph("ea", "onemax")
     

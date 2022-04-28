@@ -1,27 +1,30 @@
 import numpy as np
 from test_cases.onemax import fitness_calculation_onemax, fitness_onemax
 from test_cases.twomax import fitness_calculation_twomax, fitness_twomax
-from random import choice
 import multiprocessing
 import sys
 
-#uniformly distributed initialisation
-#n = size of the candidate
+# uniformly distributed initialisation
+# n = size of the candidate
 def unif_initialization(n):
     bit_list = np.random.randint(2, size = n)
     candidate_solution = ''.join(str(bit) for bit in bit_list)
     return candidate_solution
 
+# mutation operator
 def mutation_operator(candidate):
     n = len(candidate)
-    bit_to_flip = np.random.randint(1, n+1)
-    new_candidate = candidate[0:bit_to_flip - 1]
-    if (candidate[bit_to_flip - 1] == '1'):
-        new_candidate += '0'
-    else:
-        new_candidate += '1'
-    if (bit_to_flip < n):
-        new_candidate += candidate[bit_to_flip:]
+    probability_to_flip = 1/n
+    new_candidate = ''
+    for i in range(n):
+        check_probability = np.random.random_sample()
+        if (check_probability < probability_to_flip):
+            if (candidate[i] == '1'):
+                new_candidate += '0'
+            else:
+                new_candidate += '1'
+        else:
+            new_candidate += candidate[i]
     return new_candidate
 
 # fitness calculation
@@ -39,9 +42,10 @@ def fitness_calculation(x, i):
     if i == 1:
         return fitness_calculation_twomax(x)
 
-# rls method
-def rls(input_data):
-    
+# the benchmark func has the following meaning. 0 is for onemax and 1 for twomax.
+# (1 + 1) EA with standard bit mutation operator
+def ea(input_data):
+
     # set input data
     n = input_data[0]
     benchmark_func = input_data[1]
@@ -52,7 +56,8 @@ def rls(input_data):
     # evaluate f(x)
     local_opt = 0
     termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
-    # set run-time
+    
+    # set run time
     run_time = 1
     while (termination_condition == False):
         new_candidate = mutation_operator(current_candidate)
@@ -75,24 +80,24 @@ def process_input_data(n, benchmark_func, repeat):
     
     return input_data_lst
 
-# rls method single core      
-def rls_singlecore(n, benchmark_func, repeat):
+# (1 + 1) EA method single core      
+def ea_singlecore(n, benchmark_func, repeat):
     result = 0
     prepare_data = [n, benchmark_func]
     for i in range(repeat):
-        result += rls(prepare_data)
+        result += ea(prepare_data)
     result /= repeat
     return result
 
-# rls method multi core
-def rls_multiprocessing(n, benchmark_func, repeat, core = 6):
+# (1 + 1) EA method multi core
+def ea_multiprocessing(n, benchmark_func, repeat, core = 6):
     result = 0
 
     # multiprocess the results
     prepare_data = process_input_data(n, benchmark_func, repeat)
     with multiprocessing.Pool(core) as pool:
-        resultList = pool.map(rls, prepare_data)
-
+        resultList = pool.map(ea, prepare_data)
+    
     # process list of results obtained
     for i in resultList:
         result += i
@@ -106,22 +111,22 @@ def get_data(max_bit, repeat, benchmark_func = 0, multicore = True):
     run_time_lst = np.array([])
     for n in range(5, max_bit+1):
         if multicore == True:
-            run_time = rls_multiprocessing(n, benchmark_func, repeat, core = 10)
+            run_time = ea_multiprocessing(n, benchmark_func, repeat, core = 10)
         else:
-            run_time = rls_singlecore(n, benchmark_func, repeat)
+            run_time = ea_singlecore(n, benchmark_func, repeat)
         run_time_lst = np.append(run_time_lst, run_time)
-        #To check progress
+        # to check progress
         sys.stdout.write(f"\r{' '*100}\r")
         sys.stdout.flush()
         sys.stdout.write('Currently working on ' + str(n) + 'th' + ' bit out of ' + str(max_bit) + ' bits')
         sys.stdout.flush()
     if benchmark_func == 0:
-        file = "results/rls_onemax_results.npy"
+        file = "results/ea_onemax_results.npy"
     else:
-        file = "results/rls_twomax_results.npy"
+        file = "results/ea_twomax_results.npy"
     data = np.asarray(run_time_lst)
     np.save(file, data)
-    
-# to run the desired code
+
+    # to run the desired code
 if __name__ == "__main__":
     get_data(50, 100)
