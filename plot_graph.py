@@ -123,8 +123,8 @@ def plot_graph(select_method, select_benchmark):
             x_axis = np.arange(5, len(y_axis)+5)
         
         elif (select_benchmark == "uf75"):
-            y_axis = np.load('results/ea_uf_75_optimum_list.npy')
-            x_axis = np.load('results/ea_uf_75_run_time_list.npy')
+            y_axis = np.load('results/ea_uf75_optimum_list.npy')
+            x_axis = np.load('results/ea_uf75_run_time_list.npy')
 
         elif (select_benchmark == "uf250"):
             y_axis = np.load('results/ea_uf250_optimum_list.npy')
@@ -159,4 +159,5 @@ if __name__ == "__main__":
     plt.figure()
     plot_graph("rls", "uf75")
     plot_graph("opt_ia", "uf75")
+    plot_graph("ea", "uf75")
     
