@@ -82,17 +82,16 @@ def rls(input_data):
             cnf_list = "uf75"
         else:
             cnf_list = "uf250"        
-
-    sys.stdout.write(f"\r{' '*100}\r")
-    sys.stdout.flush()
-    print('Currently working on ' + str(cnf_index) + 'th file out of ' + str(100) + ' files')
-    sys.stdout.flush()
-
+    
     # initialize candidate solution
     current_candidate = unif_initialization(n)
 
     # evaluate f(x), termination condition different for maxsat and others
     if benchmark_func == 2:
+        sys.stdout.write(f"\r{' '*100}\r")
+        sys.stdout.flush()
+        sys.stdout.write('Currently working on ' + str(cnf_index) + 'th file out of ' + str(100) + ' files')
+        sys.stdout.flush()
         termination_condition = terminate_maxsat(current_candidate, cnf_list, cnf_index, run_time)
     else:
         local_opt = 0
@@ -119,7 +118,6 @@ def rls(input_data):
             run_times = np.append(run_times, run_time)
             optimums_found = np.append(optimums_found, optimum_found)
     if benchmark_func == 2:
-        print(optimums_found)
         return run_times, optimums_found
     else:
         return run_time
@@ -189,7 +187,6 @@ def rls_multiprocessing(n, benchmark_func, repeat, core = 6, cnf_file = 0):
         prepare_data = process_input_data(n, benchmark_func, repeat, cnf_file)
     else:
         prepare_data = process_input_data(n, benchmark_func, repeat)
-    print(prepare_data)
     with multiprocessing.Pool(core) as pool:
         resultList = pool.map(rls, prepare_data)
 
@@ -207,7 +204,6 @@ def rls_multiprocessing(n, benchmark_func, repeat, core = 6, cnf_file = 0):
                     optimum = np.append(optimum, optimum[optimum_size - 1])
 
             optimum_total = np.add(optimum_total, optimum)
-            print(i)
         return run_times, optimum_total
     else:
         for i in resultList:
@@ -223,18 +219,21 @@ def get_data(max_bit, repeat, benchmark_func = 0, multicore = True, cnf_file = 0
         sys.stdout.flush()
         if cnf_file == 0:
             n = 75
+            text = 'uf75'
         else:
             n = 250
+            text = 'uf250'
         if multicore == True:
+            
             run_times, optimum_total = rls_multiprocessing(n, benchmark_func, repeat, core = 10, cnf_file = cnf_file)
         else:
             run_times, optimum_total = rls_singlecore(n, benchmark_func, repeat, cnf_file = cnf_file)
         # save run times
-        run_time_file = "results/opt_ia_maxsat_run_time_list.npy"
+        run_time_file = "results/rls_" + text + "_run_time_list.npy"
         data = np.asarray(run_times)
         np.save(run_time_file, data)
         # save optimum per run time list
-        optimum_file = "results/opt_ia_maxsat_optimum_list.npy"
+        optimum_file = "results/rls_" + text + "_optimum_list.npy"
         data = np.asarray(optimum_total)
         np.save(optimum_file, data)
     else:

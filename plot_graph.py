@@ -30,9 +30,13 @@ def plot_graph(select_method, select_benchmark):
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
         
-        elif (select_benchmark == "maxsat"):
-            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
-            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
+        elif (select_benchmark == "uf75"):
+            y_axis = np.load('results/rls_uf75_optimum_list.npy')
+            x_axis = np.load('results/rls_uf75_run_time_list.npy')
+
+        elif (select_benchmark == "uf250"):
+            y_axis = np.load('results/rls_uf250_optimum_list.npy')
+            x_axis = np.load('results/rls_uf250_run_time_list.npy')
 
     # for opt ia with static hyper mutation operator
     elif (select_method == "opt_ia"):
@@ -57,9 +61,13 @@ def plot_graph(select_method, select_benchmark):
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
 
-        elif (select_benchmark == "maxsat"):
-            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
-            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
+        elif (select_benchmark == "uf75"):
+            y_axis = np.load('results/opt_ia_uf75_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_uf75_run_time_list.npy')
+
+        elif (select_benchmark == "uf250"):
+            y_axis = np.load('results/opt_ia_uf250_optimum_list.npy')
+            x_axis = np.load('results/opt_ia_uf250_run_time_list.npy')
 
     # for symmetric mexpoHD
     elif (select_method == "symmetric_mexpoHD"):
@@ -84,9 +92,13 @@ def plot_graph(select_method, select_benchmark):
             control_label = "$n^{3/2}$logn"
             x_axis = np.arange(5, len(y_axis)+5)
         
-        elif (select_benchmark == "maxsat"):
-            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
-            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
+        elif (select_benchmark == "uf75"):
+            y_axis = np.load('results/symmetric_mexpoHD_uf75_optimum_list.npy')
+            x_axis = np.load('results/symmetric_mexpoHD_uf75_run_time_list.npy')
+
+        elif (select_benchmark == "uf7250"):
+            y_axis = np.load('results/symmetric_mexpoHD_uf250_optimum_list.npy')
+            x_axis = np.load('results/symmetric_mexpoHD_uf250_run_time_list.npy')
 
     elif (select_method == "ea"):
 
@@ -110,11 +122,15 @@ def plot_graph(select_method, select_benchmark):
             control_label = "nlogn"
             x_axis = np.arange(5, len(y_axis)+5)
         
-        elif (select_benchmark == "maxsat"):
-            y_axis = np.load('results/opt_ia_maxsat_optimum_list.npy')
-            x_axis = np.load('results/opt_ia_maxsat_run_time_list.npy')
+        elif (select_benchmark == "uf75"):
+            y_axis = np.load('results/ea_uf_75_optimum_list.npy')
+            x_axis = np.load('results/ea_uf_75_run_time_list.npy')
 
-    if (select_benchmark == "maxsat"):
+        elif (select_benchmark == "uf250"):
+            y_axis = np.load('results/ea_uf250_optimum_list.npy')
+            x_axis = np.load('results/ea_uf250_run_time_list.npy')
+
+    if (select_benchmark == "uf75") or (select_benchmark == "uf250"):
         plt.xlabel("run time")
         plt.ylabel("optimum found")
         plt.plot(x_axis, y_axis, label = select_method)
@@ -141,5 +157,6 @@ if __name__ == "__main__":
     plt.figure()
     plot_graph("ea", "onemax")
     plt.figure()
-    plot_graph("rls", "maxsat")
+    plot_graph("rls", "uf75")
+    plot_graph("opt_ia", "uf75")
     
