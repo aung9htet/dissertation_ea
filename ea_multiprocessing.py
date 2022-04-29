@@ -43,20 +43,22 @@ def fitness_calculation(x, i):
     if i == 1:
         return fitness_calculation_twomax(x)
 
+# termination for maxsat is dependent on the number runs and thus is represented as shown
+def terminate_maxsat(run_time):
+    # number of runs is set at 40000 as discussed with Dr Pietro Oliveto
+    if run_time >= 100:
+        return True
+    else:
+        return False
+
 # cnf file is to choose from uf75 and uf250 while cnf index is to chose which test cases of the 100 instances that will be used
-# termination for maxsat is dependent on either the fitness or the number runs and thus is represented as shown
-def terminate_maxsat(x, cnf_file, cnf_index, run_time):
+def check_optimum_maxsat(x, cnf_file, cnf_index):
     file = 'prerequisites/' + cnf_file + '.npy'
     cnf_list = np.load(file)
     cnf = cnf_list[cnf_index]
     check_fitness = fitness_maxsat(x, cnf)
     if check_fitness == True:
         return True
-    # number of runs is set at 40000 as discussed with Dr Pietro Oliveto
-    elif run_time >= 100:
-        return True
-    else:
-        return False
 
 # fitness calculation for max sat
 def calculate_fitness_maxsat(x, cnf_file, cnf_index):
@@ -73,7 +75,7 @@ def ea(input_data):
     # set input data
     n = input_data[0]
     benchmark_func = input_data[1]
-    optimum_found = 1
+    optimum_found = 0
     run_time = 1
 
     if benchmark_func == 2:
@@ -81,6 +83,10 @@ def ea(input_data):
         optimums_found = np.array([optimum_found])
         cnf_file = input_data[2]
         cnf_index = input_data[3]
+        sys.stdout.write(f"\r{' '*100}\r")
+        sys.stdout.flush()
+        sys.stdout.write('Currently working on ' + str(cnf_index + 1) + 'th file out of ' + str(100) + ' files')
+        sys.stdout.flush()
         if cnf_file == 0:
             cnf_list = "uf75"
         else:
@@ -91,11 +97,12 @@ def ea(input_data):
     
     # evaluate f(x), termination condition different for maxsat and others
     if benchmark_func == 2:
-        sys.stdout.write(f"\r{' '*100}\r")
-        sys.stdout.flush()
-        sys.stdout.write('Currently working on ' + str(cnf_index) + 'th file out of ' + str(100) + ' files')
-        sys.stdout.flush()
-        termination_condition = terminate_maxsat(current_candidate, cnf_list, cnf_index, run_time)
+        termination_condition = terminate_maxsat(run_time)
+        check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
+        if check_fitness == True:
+            if current_candidate not in optimum_list:
+                optimum_found += 1
+                optimum_list = np.append(optimum_list, current_candidate)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
@@ -111,15 +118,23 @@ def ea(input_data):
             current_fitness_candidate = fitness_calculation(current_candidate, benchmark_func)
         if new_fitness_candidate >= current_fitness_candidate:
             current_candidate = new_candidate
-            optimum_found += 1
         if benchmark_func == 2:
-            termination_condition = terminate_maxsat(current_candidate, cnf_list, cnf_index, run_time)
+            termination_condition = terminate_maxsat(run_time)
+            check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
+            if check_fitness == True:
+                if current_candidate not in optimum_list:
+                    optimum_found += 1
+                    optimum_list = np.append(optimum_list, current_candidate)
         else:
             termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
         run_time += 1
         if benchmark_func == 2:
             run_times = np.append(run_times, run_time)
             optimums_found = np.append(optimums_found, optimum_found)
+            sys.stdout.write(f"\r{' '*100}\r")
+            sys.stdout.flush()
+            sys.stdout.write('Currently working on ' + str(run_time) + ' out of 100,000 runtime for ' +  str(cnf_index + 1) + 'th file out of ' + str(100) + ' files\n')
+            sys.stdout.flush()
     if benchmark_func == 2:
         return run_times, optimums_found
     else:
@@ -157,23 +172,23 @@ def process_input_data(n, benchmark_func, repeat, cnf_file = 0):
     return input_data_lst
 
 # (1 + 1) EA method single core      
-def ea_singlecore(n, benchmark_func, repeat, cnf_file = 0):
+def ea_singlecore(n, benchmark_func, repeat, max_runtime = 1000, cnf_file = 0):
     result = 0
     if benchmark_func == 2:
         prepare_data = process_input_data(n, benchmark_func, repeat, cnf_file)
 
-        # max size is 1000
-        optimum_total = np.zeros(1001)
+        # max size is 1000 by default
+        optimum_total = np.zeros(max_runtime)
         for i in prepare_data:
-            run_times, optimum =  ea(i)
+            run_times, optimum = ea(i)
             optimum_size = len(optimum)
             # add to all behind if best solution is found since best solution would be less than expected
-            if optimum_size < 1001:
-                while (optimum_size < 1001):
+            if optimum_size < max_runtime:
+                while (optimum_size < max_runtime):
                     optimum = np.append(optimum, optimum[optimum_size - 1])
 
             optimum_total = np.add(optimum_total, optimum)
-        return run_times, optimum_total
+        return run_times[:max_runtime], optimum_total[:max_runtime]
     else:
         prepare_data = process_input_data(n, benchmark_func, repeat)
         for i in prepare_data:
@@ -182,7 +197,7 @@ def ea_singlecore(n, benchmark_func, repeat, cnf_file = 0):
         return result
 
 # (1 + 1) EA method multi core
-def ea_multiprocessing(n, benchmark_func, repeat, core = 6, cnf_file = 0):
+def ea_multiprocessing(n, benchmark_func, repeat, max_runtime = 1000, core = 6, cnf_file = 0):
     result = 0
 
     # multiprocess the results
@@ -195,19 +210,21 @@ def ea_multiprocessing(n, benchmark_func, repeat, core = 6, cnf_file = 0):
 
     # process list of results obtained
     if benchmark_func == 2:
-
-        # max size is 1001
-        optimum_total = np.zeros(101)
+        optimum_total = np.zeros(max_runtime)
         for i in resultList:
             run_times, optimum =  i
             optimum_size = len(optimum)
-            # add to all behind if best solution is found since best solution would be less than expected
-            if optimum_size < 101:
-                while (optimum_size < 101):
-                    optimum = np.append(optimum, optimum[optimum_size - 1])
 
-            optimum_total = np.add(optimum_total, optimum)
-        return run_times, optimum_total
+            # add to all behind if best solution is found since best solution would be less than expected
+            if optimum_size < max_runtime:
+                optimum_fill = np.empty(max_runtime - (optimum_size))
+                optimum_fill.fill(optimum[optimum_size - 1])
+                optimum = np.append(optimum, optimum_fill)
+
+            optimum_total = np.add(optimum_total, optimum[:max_runtime])
+        sys.stdout.write('Results processed.')
+        sys.stdout.flush()
+        return run_times[:max_runtime], optimum_total[:max_runtime]
     else:
         for i in resultList:
             result += i
@@ -226,7 +243,7 @@ def get_data(max_bit, repeat, benchmark_func = 0, multicore = True, cnf_file = 0
             n = 250
             text = 'uf250'
         if multicore == True:
-            run_times, optimum_total = ea_multiprocessing(n, benchmark_func, repeat, core = 10, cnf_file = cnf_file)
+            run_times, optimum_total = ea_multiprocessing(n, benchmark_func, repeat, max_runtime = 100, core = 10, cnf_file = cnf_file)
         else:
             run_times, optimum_total = ea_singlecore(n, benchmark_func, repeat, cnf_file = cnf_file)
         # save run times

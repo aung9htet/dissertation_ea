@@ -166,9 +166,9 @@ if __name__ == "__main__":
     plt.figure()
     plot_graph("symmetric_mexpoHD", "uf75")
     plt.figure()
-    plot_graph("rls", "uf75", plot_later=False)
-    plot_graph("opt_ia", "uf75", plot_later=False)
-    plot_graph("ea", "uf75", plot_later=False)
-    plot_graph("symmetric_mexpoHD", "uf75", plot_later=False)
+    plot_graph("rls", "uf75", plot_later=True)
+    plot_graph("opt_ia", "uf75", plot_later=True)
+    plot_graph("ea", "uf75", plot_later=True)
+    plot_graph("symmetric_mexpoHD", "uf75", plot_later=True)
     file = "plotted_results/combined_results"
     plt.savefig(file, dpi=300, bbox_inches = "tight")

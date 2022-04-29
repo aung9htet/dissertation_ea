@@ -48,14 +48,17 @@ def unif_mutation(candidate, benchmark_func, run_time, optimum_found, best = Non
             current_fitness_candidate = fitness_calculation(candidate, benchmark_func)
         if new_fitness_candidate > current_fitness_candidate:
             bit_change_condition = False
-            optimum_found += 1
         if (hamming_distance(new_candidate, candidate) >= mutation_potential):
             bit_change_condition = False
         # add run-time after checking fitness
         run_time += 1
         if benchmark_func == 2:
             run_times = np.append(run_times, run_time)
-            optimums_found = np.append(optimums_found, calculate_fitness_maxsat(best, cnf_list, cnf_index))
+            optimums_found = np.append(optimums_found, optimum_found)
+            sys.stdout.write(f"\r{' '*100}\r")
+            sys.stdout.flush()
+            sys.stdout.write('Currently working on ' + str(run_time) + ' out of 100,000 runtime for ' +  str(cnf_index + 1) + 'th file out of ' + str(100) + ' files\n')
+            sys.stdout.flush()
     if benchmark_func == 2:
         return new_candidate, run_times, optimums_found, run_time, optimum_found
     else:
@@ -103,20 +106,22 @@ def fitness_calculation(x, i):
     if i == 1:
         return fitness_calculation_twomax(x)
 
+# termination for maxsat is dependent on the number runs and thus is represented as shown
+def terminate_maxsat(run_time):
+    # number of runs is set at 40000 as discussed with Dr Pietro Oliveto
+    if run_time >= 100:
+        return True
+    else:
+        return False
+
 # cnf file is to choose from uf75 and uf250 while cnf index is to chose which test cases of the 100 instances that will be used
-# termination for maxsat is dependent on either the fitness or the number runs and thus is represented as shown
-def terminate_maxsat(x, cnf_file, cnf_index, run_time):
+def check_optimum_maxsat(x, cnf_file, cnf_index):
     file = 'prerequisites/' + cnf_file + '.npy'
     cnf_list = np.load(file)
     cnf = cnf_list[cnf_index]
     check_fitness = fitness_maxsat(x, cnf)
     if check_fitness == True:
         return True
-    # number of runs is set at 40000 as discussed with Dr Pietro Oliveto
-    elif run_time >= 100:
-        return True
-    else:
-        return False
 
 # fitness calculation for max sat
 def calculate_fitness_maxsat(x, cnf_file, cnf_index):
@@ -135,7 +140,7 @@ def immune_algorithm(input_data):
     n = input_data[0]
     C = input_data[1]
     benchmark_func = input_data[2]
-    optimum_found = 1
+    optimum_found = 0
     run_time = 1
     intialized_candidate = unif_initialization(n)
 
@@ -146,13 +151,14 @@ def immune_algorithm(input_data):
         cnf_index = input_data[4]
         sys.stdout.write(f"\r{' '*100}\r")
         sys.stdout.flush()
-        sys.stdout.write('Currently working on ' + str(cnf_index) + 'th file out of ' + str(100) + ' files')
+        sys.stdout.write('Currently working on ' + str(cnf_index + 1) + 'th file out of ' + str(100) + ' files')
         sys.stdout.flush()
         if cnf_file == 0:
             cnf_list = "uf75"
         else:
             cnf_list = "uf250"
-        optimums_found = np.array([calculate_fitness_maxsat(intialized_candidate, cnf_list, cnf_index)])
+        optimum_list = np.array([])
+        optimums_found = np.array(optimum_found)
 
     age_threshold = n * np.log(n) * C
     # initialize x
@@ -162,13 +168,17 @@ def immune_algorithm(input_data):
     
     # evaluate f(x)
     if benchmark_func == 2:
-        termination_condition = terminate_maxsat(best, cnf_list, cnf_index, run_time)
+        termination_condition = terminate_maxsat(run_time)
+        check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
+        if check_fitness == True:
+            if best not in optimum_list:
+                optimum_found += 1
+                optimum_list = np.append(optimum_list, best)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
 
     while (termination_condition == False):
-        
         # add age
         x_age = x[2] + 1
         x = (x[0], x[1], x_age)
@@ -203,9 +213,14 @@ def immune_algorithm(input_data):
             if new_fitness_candidate >= best_fitness_candidate:
                 # set best solution
                 best = y[0]
-
+                
                 if benchmark_func == 2:
-                    termination_condition = terminate_maxsat(best, cnf_list, cnf_index, run_time)
+                    termination_condition = terminate_maxsat(run_time)
+                    check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
+                    if check_fitness == True:
+                        if best not in optimum_list:
+                            optimum_found += 1
+                            optimum_list = np.append(optimum_list, best)
                 else:
                     termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
         else:
@@ -231,6 +246,8 @@ def immune_algorithm(input_data):
             y_fitness_candidate = fitness_calculation(y[0], benchmark_func)
         if x_fitness_candidate < y_fitness_candidate:
             x = (y[0], x[1], x[2])
+        if benchmark_func == 2:
+            termination_condition = terminate_maxsat(run_time)
     if benchmark_func == 2:
         return run_times, optimums_found
     else:
@@ -274,7 +291,7 @@ def symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat, max_runtime = 100
     if benchmark_func == 2:
         prepare_data = process_input_data(n, c, benchmark_func, repeat, cnf_file = 0)
 
-        # max size is 1000
+        # max size is 1000 by default
         optimum_total = np.zeros(max_runtime)
         for i in prepare_data:
             run_times, optimum = immune_algorithm(i)
@@ -285,7 +302,7 @@ def symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat, max_runtime = 100
                     optimum = np.append(optimum, optimum[optimum_size - 1])
 
             optimum_total = np.add(optimum_total, optimum)
-        return run_times, optimum_total
+        return run_times[:max_runtime], optimum_total[:max_runtime]
     else:
         prepare_data = process_input_data(n, c, benchmark_func, repeat)
         for i in prepare_data:
@@ -307,7 +324,6 @@ def symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, max_runtime 
     sys.stdout.flush()
     sys.stdout.write('Completed calculating results. Now processing...')
     sys.stdout.flush()
-
     # process list of results obtained
     if benchmark_func == 2:
         optimum_total = np.zeros(max_runtime)
@@ -324,7 +340,7 @@ def symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, max_runtime 
             optimum_total = np.add(optimum_total, optimum[:max_runtime])
         sys.stdout.write('Results processed.')
         sys.stdout.flush()
-        return run_times[:max_runtime], optimum_total
+        return run_times[:max_runtime], optimum_total[:max_runtime]
     else:
         for i in resultList:
             result += i
@@ -350,7 +366,6 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
         # save run times
         sys.stdout.write('Saving results')
         sys.stdout.flush()
-        print("hi")
         run_time_file = "results/symmetric_mexpoHD_" + text + "_run_time_list.npy"
         data = np.asarray(run_times)
         np.save(run_time_file, data)
@@ -363,7 +378,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
         sys.stdout.flush()
         for n in range(5, max_bit+1):
             if multicore == True:
-                run_time = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 10)
+                run_time = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 4)
             else:
                 run_time = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat)
             run_time_lst = np.append(run_time_lst, run_time)
