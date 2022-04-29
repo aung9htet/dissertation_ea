@@ -3,7 +3,7 @@ import matplotlib.ticker as mticker
 import numpy as np
 
 #plot graph depending on the method and benchmark function used
-def plot_graph(select_method, select_benchmark):
+def plot_graph(select_method, select_benchmark, plot_later = False):
 
     test_label = select_method
 
@@ -141,9 +141,10 @@ def plot_graph(select_method, select_benchmark):
         plt.plot(x_axis,y_axis, label = test_label)
         plt.plot(x_axis,control_y, label = control_label)
         plt.legend()
-    file = "plotted_results/"
-    file += select_method + "_" + select_benchmark
-    plt.savefig(file, dpi=300, bbox_inches = "tight")
+    if plot_later == False:
+        file = "plotted_results/"
+        file += select_method + "_" + select_benchmark
+        plt.savefig(file, dpi=300, bbox_inches = "tight")
 
 if __name__ == "__main__":
     plt.figure()
@@ -158,6 +159,16 @@ if __name__ == "__main__":
     plot_graph("ea", "onemax")
     plt.figure()
     plot_graph("rls", "uf75")
+    plt.figure()
     plot_graph("opt_ia", "uf75")
+    plt.figure()
     plot_graph("ea", "uf75")
-    
+    plt.figure()
+    plot_graph("symmetric_mexpoHD", "uf75")
+    plt.figure()
+    plot_graph("rls", "uf75", plot_later=False)
+    plot_graph("opt_ia", "uf75", plot_later=False)
+    plot_graph("ea", "uf75", plot_later=False)
+    plot_graph("symmetric_mexpoHD", "uf75", plot_later=False)
+    file = "plotted_results/combined_results"
+    plt.savefig(file, dpi=300, bbox_inches = "tight")

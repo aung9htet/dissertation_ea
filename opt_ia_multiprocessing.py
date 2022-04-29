@@ -86,6 +86,7 @@ def mutation_operator(candidate, c, benchmark_func, run_time, optimum_found, cnf
             new_fitness_candidate = fitness_calculation(new_candidate, benchmark_func)
             current_fitness_candidate = fitness_calculation(candidate, benchmark_func)
         if new_fitness_candidate > current_fitness_candidate:
+            optimum_found += 1
             continue_flipping = False
         if count_flip >= max_number_flip:
             continue_flipping = False
@@ -94,7 +95,7 @@ def mutation_operator(candidate, c, benchmark_func, run_time, optimum_found, cnf
             run_times = np.append(run_times, run_time)
             optimums_found = np.append(optimums_found, optimum_found)
     if benchmark_func == 2:
-        return new_candidate, run_times, optimums_found, run_time
+        return new_candidate, run_times, optimums_found, run_time, optimum_found
     else:
         return new_candidate, run_time
 
@@ -108,6 +109,7 @@ def opt_ia(input_data):
     optimum_found = 1
     run_time = 1
 
+    # required variables for maxsat
     if benchmark_func == 2:
         run_times = np.array([run_time])
         optimums_found = np.array([optimum_found])
@@ -134,7 +136,7 @@ def opt_ia(input_data):
 
     while (termination_condition == False):
         if benchmark_func == 2:
-            new_candidate, run_times, optimums_found, run_time = mutation_operator(current_candidate, c, benchmark_func, run_time, optimum_found, cnf_list, cnf_index, run_times, optimums_found)
+            new_candidate, run_times, optimums_found, run_time, optimum_found = mutation_operator(current_candidate, c, benchmark_func, run_time, optimum_found, cnf_list, cnf_index, run_times, optimums_found)
             new_fitness_candidate = calculate_fitness_maxsat(new_candidate, cnf_list, cnf_index)
             current_fitness_candidate = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
         else:
@@ -145,7 +147,6 @@ def opt_ia(input_data):
         # check fitness of new candidates
         if new_fitness_candidate >= current_fitness_candidate:
             current_candidate = new_candidate
-            optimum_found += 1
 
         # check termination condition
         if benchmark_func == 2:
@@ -239,7 +240,7 @@ def opt_ia_multiprocessing(n, c, benchmark_func, repeat, core = 6, cnf_file = 0)
 
             # add to all behind if best solution is found since best solution would be less than expected
             if optimum_size < 101:
-                optimum_fill = np.empty(101 - (optimum_size + 1))
+                optimum_fill = np.empty(101 - (optimum_size))
                 optimum_fill.fill(optimum[optimum_size - 1])
                 optimum = np.append(optimum, optimum_fill)
 
