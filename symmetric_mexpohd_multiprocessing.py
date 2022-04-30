@@ -8,9 +8,13 @@ import sys
 
 # uniformly distributed initialisation
 # n = size of the candidate
-def unif_initialization(n):
-    bit_list = np.random.randint(2, size = n)
-    candidate_solution = ''.join(str(bit) for bit in bit_list)
+def unif_initialization(n, cnf_list, cnf_index, initialise_single_candidate = True):
+    if cnf_list is not None and initialise_single_candidate is True:
+        cnf_files = np.load("prerequisites/" + cnf_list + "_init.npy")
+        candidate_solution = cnf_files[cnf_index]
+    else:
+        bit_list = np.random.randint(2, size = n)
+        candidate_solution = ''.join(str(bit) for bit in bit_list)
     return candidate_solution
 
 # mutation operator
@@ -109,7 +113,7 @@ def fitness_calculation(x, i):
 # termination for maxsat is dependent on the number runs and thus is represented as shown
 def terminate_maxsat(run_time):
     # number of runs is set at 40000 as discussed with Dr Pietro Oliveto
-    if run_time >= 100:
+    if run_time >= 100000:
         return True
     else:
         return False
@@ -142,7 +146,8 @@ def immune_algorithm(input_data):
     benchmark_func = input_data[2]
     optimum_found = 0
     run_time = 1
-    intialized_candidate = unif_initialization(n)
+    cnf_list = None
+    cnf_index = None
 
     # required variables for maxsat
     if benchmark_func == 2:
@@ -159,6 +164,8 @@ def immune_algorithm(input_data):
             cnf_list = "uf250"
         optimum_list = np.array([])
         optimums_found = np.array(optimum_found)
+
+    intialized_candidate = unif_initialization(n, cnf_list, cnf_index)
 
     age_threshold = n * np.log(n) * C
     # initialize x
@@ -233,7 +240,7 @@ def immune_algorithm(input_data):
             # check for age threshold and probability to die set at 0.5
             if ((candidate[2] > age_threshold) and (decide_eliminate_candidate(0.5) == True)):
                 # reset the candidate and their age
-                reset_candidate = unif_initialization(n) # reinitialize
+                reset_candidate = unif_initialization(n, None, None) # reinitialize
                 x = (reset_candidate, x[0], 0) 
                 y = (reset_candidate, y[0], 0)
                 
@@ -360,9 +367,9 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
             n = 250
             text = 'uf250'
         if multicore == True:
-            run_times, optimum_total = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, max_runtime = 100, core = 10, cnf_file = cnf_file)
+            run_times, optimum_total = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, max_runtime = 100000, core = 10, cnf_file = cnf_file)
         else:
-            run_times, optimum_total = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat, max_runtime = 100, cnf_file = cnf_file)
+            run_times, optimum_total = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat, max_runtime = 100000, cnf_file = cnf_file)
         # save run times
         sys.stdout.write('Saving results')
         sys.stdout.flush()
@@ -378,7 +385,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
         sys.stdout.flush()
         for n in range(5, max_bit+1):
             if multicore == True:
-                run_time = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 4)
+                run_time = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 10)
             else:
                 run_time = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat)
             run_time_lst = np.append(run_time_lst, run_time)
