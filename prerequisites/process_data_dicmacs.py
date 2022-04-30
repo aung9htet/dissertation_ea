@@ -9,7 +9,7 @@ def process_satlib(select_lib):
     
     # select line for lib
     if select_lib == "uf75":
-        directory = (r'C:..\\satlib\\UF75.325.100')
+        directory = (r'..\\satlib\\UF75.325.100')
         max_clause = 333
     elif select_lib == "uf250":
         directory = (r'..\\satlib\\uf250-1065\\UF250.1065.100')
