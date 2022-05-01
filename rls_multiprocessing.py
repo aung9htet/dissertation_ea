@@ -1,4 +1,3 @@
-from typing_extensions import runtime
 import numpy as np
 from test_cases.onemax import fitness_calculation_onemax, fitness_onemax
 from test_cases.twomax import fitness_calculation_twomax, fitness_twomax

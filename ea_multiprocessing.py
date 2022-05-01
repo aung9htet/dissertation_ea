@@ -96,7 +96,8 @@ def ea(input_data):
         if cnf_file == 0:
             cnf_list = "uf75"
         else:
-            cnf_list = "uf250"    
+            cnf_list = "uf250"
+        optimum_list = np.array([])
 
     # initialize candidate solution
     current_candidate = unif_initialization(n, cnf_list, cnf_index)

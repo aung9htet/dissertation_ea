@@ -124,6 +124,7 @@ def opt_ia(input_data):
 
     # required variables for maxsat
     if benchmark_func == 2:
+        optimum_list = np.array([])
         run_times = np.array([run_time])
         optimums_found = np.array([optimum_found])
         cnf_file = input_data[3]

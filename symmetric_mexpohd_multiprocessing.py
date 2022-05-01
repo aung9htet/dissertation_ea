@@ -227,7 +227,7 @@ def immune_algorithm(input_data):
                     if check_fitness == True:
                         if best not in optimum_list:
                             optimum_found += 1
-                            optimum_list = np.append(optimum_list, best)
+                            optimum_list = np.append(optimum_list, optimum_found)
                 else:
                     termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
         else:
@@ -403,7 +403,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
 
 # to run the desired code
 if __name__ == "__main__":
-    get_data(50,5,1,benchmark_func=2)
+    get_data(75,5,1,benchmark_func=0)
     """
     print("Starting Onemax for Symmetric MexpoHD")
     get_data(50, 1, 100)
