@@ -131,7 +131,7 @@ def ea(input_data):
             if check_fitness == True:
                 if current_candidate not in optimum_list:
                     optimum_found += 1
-                    optimum_list = np.append(optimum_list, current_candidate)
+                    optimum_list = np.append(optimum_list, optimum_found)
         else:
             termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
         run_time += 1
