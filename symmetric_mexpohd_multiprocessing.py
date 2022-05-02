@@ -178,7 +178,7 @@ def immune_algorithm(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
         if check_fitness == True:
-            if best not in optimum_list:
+            if not best in optimum_list:
                 optimum_found += 1
                 optimum_list = np.append(optimum_list, best)
     else:
@@ -225,7 +225,7 @@ def immune_algorithm(input_data):
                     termination_condition = terminate_maxsat(run_time)
                     check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
                     if check_fitness == True:
-                        if best not in optimum_list:
+                        if not best in optimum_list:
                             optimum_found += 1
                             optimum_list = np.append(optimum_list, best)
                 else:
@@ -403,7 +403,7 @@ def get_data(max_bit, c, repeat, benchmark_func = 0, multicore = True, cnf_file 
 
 # to run the desired code
 if __name__ == "__main__":
-    get_data(75,5,1,benchmark_func=0)
+    get_data(75,5,1,benchmark_func=2)
     """
     print("Starting Onemax for Symmetric MexpoHD")
     get_data(50, 1, 100)

@@ -103,7 +103,7 @@ def rls(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
         if check_fitness == True:
-            if current_candidate not in optimum_list:
+            if not current_candidate in optimum_list:
                 optimum_found += 1
                 optimum_list = np.append(optimum_list, current_candidate)
     else:
@@ -125,7 +125,7 @@ def rls(input_data):
             termination_condition = terminate_maxsat(run_time)
             check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
             if check_fitness == True:
-                if current_candidate not in optimum_list:
+                if not current_candidate in optimum_list:
                     optimum_found += 1
                     optimum_list = np.append(optimum_list, current_candidate)
         else:

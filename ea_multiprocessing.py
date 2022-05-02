@@ -63,6 +63,8 @@ def check_optimum_maxsat(x, cnf_file, cnf_index):
     check_fitness = fitness_maxsat(x, cnf)
     if check_fitness == True:
         return True
+    else:
+        return False
 
 # fitness calculation for max sat
 def calculate_fitness_maxsat(x, cnf_file, cnf_index):
@@ -107,7 +109,7 @@ def ea(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
         if check_fitness == True:
-            if current_candidate not in optimum_list:
+            if not current_candidate in optimum_list:
                 optimum_found += 1
                 optimum_list = np.append(optimum_list, current_candidate)
     else:
@@ -129,7 +131,7 @@ def ea(input_data):
             termination_condition = terminate_maxsat(run_time)
             check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
             if check_fitness == True:
-                if current_candidate not in optimum_list:
+                if not current_candidate in optimum_list:
                     optimum_found += 1
                     optimum_list = np.append(optimum_list, current_candidate)
         else:
