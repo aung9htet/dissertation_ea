@@ -227,7 +227,7 @@ def immune_algorithm(input_data):
                     if check_fitness == True:
                         if best not in optimum_list:
                             optimum_found += 1
-                            optimum_list = np.append(optimum_list, optimum_found)
+                            optimum_list = np.append(optimum_list, best)
                 else:
                     termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
         else:
