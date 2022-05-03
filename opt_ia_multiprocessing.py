@@ -124,7 +124,7 @@ def opt_ia(input_data):
 
     # required variables for maxsat
     if benchmark_func == 2:
-        optimum_list = np.array([])
+        optimum_list = []
         run_times = np.array([run_time])
         optimums_found = np.array([optimum_found])
         cnf_file = input_data[3]
@@ -148,7 +148,7 @@ def opt_ia(input_data):
         if check_fitness == True:
             if not current_candidate in optimum_list:
                 optimum_found += 1
-                optimum_list = np.append(optimum_list, current_candidate)
+                optimum_list.append(current_candidate)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
@@ -174,7 +174,7 @@ def opt_ia(input_data):
             if check_fitness == True:
                 if not current_candidate in optimum_list:
                     optimum_found += 1
-                    optimum_list = np.append(optimum_list, current_candidate)
+                    optimum_list.append(current_candidate)
         else:
             termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
     if benchmark_func == 2:

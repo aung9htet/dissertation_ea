@@ -83,7 +83,7 @@ def rls(input_data):
     if benchmark_func == 2:
         run_times = np.array([run_time])
         optimums_found = np.array([optimum_found])
-        optimum_list = np.array([])
+        optimum_list = []
         cnf_file = input_data[2]
         cnf_index = input_data[3]
         sys.stdout.write(f"\r{' '*100}\r")
@@ -105,7 +105,7 @@ def rls(input_data):
         if check_fitness == True:
             if not current_candidate in optimum_list:
                 optimum_found += 1
-                optimum_list = np.append(optimum_list, current_candidate)
+                optimum_list.append(current_candidate)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
@@ -127,7 +127,7 @@ def rls(input_data):
             if check_fitness == True:
                 if not current_candidate in optimum_list:
                     optimum_found += 1
-                    optimum_list = np.append(optimum_list, current_candidate)
+                    optimum_list.append(current_candidate)
         else:
             termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
         run_time += 1

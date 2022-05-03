@@ -162,7 +162,7 @@ def immune_algorithm(input_data):
             cnf_list = "uf75"
         else:
             cnf_list = "uf250"
-        optimum_list = np.array([])
+        optimum_list = []
         optimums_found = np.array(optimum_found)
 
     intialized_candidate = unif_initialization(n, cnf_list, cnf_index)
@@ -180,7 +180,7 @@ def immune_algorithm(input_data):
         if check_fitness == True:
             if not best in optimum_list:
                 optimum_found += 1
-                optimum_list = np.append(optimum_list, best)
+                optimum_list.append(best)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
@@ -227,7 +227,7 @@ def immune_algorithm(input_data):
                     if check_fitness == True:
                         if not best in optimum_list:
                             optimum_found += 1
-                            optimum_list = np.append(optimum_list, best)
+                            optimum_list.append(best)
                 else:
                     termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
         else:

@@ -5,6 +5,7 @@ from test_cases.maxsat import fitness_calculation_maxsat, fitness_maxsat
 import multiprocessing
 import sys
 
+
 # uniformly distributed initialisation
 # n = size of the candidate
 def unif_initialization(n, cnf_list, cnf_index, initialise_single_candidate = True):
@@ -99,7 +100,7 @@ def ea(input_data):
             cnf_list = "uf75"
         else:
             cnf_list = "uf250"
-        optimum_list = np.array([])
+        optimum_list = []
 
     # initialize candidate solution
     current_candidate = unif_initialization(n, cnf_list, cnf_index)
@@ -111,7 +112,7 @@ def ea(input_data):
         if check_fitness == True:
             if not current_candidate in optimum_list:
                 optimum_found += 1
-                optimum_list = np.append(optimum_list, current_candidate)
+                optimum_list.append(current_candidate)
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
@@ -133,7 +134,7 @@ def ea(input_data):
             if check_fitness == True:
                 if not current_candidate in optimum_list:
                     optimum_found += 1
-                    optimum_list = np.append(optimum_list, current_candidate)
+                    optimum_list.append(current_candidate)
         else:
             termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
         run_time += 1
