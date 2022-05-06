@@ -128,12 +128,15 @@ def check_optimum_maxsat(x, cnf_file, cnf_index):
         return True
 
 # fitness calculation for max sat
-def calculate_fitness_maxsat(x, cnf_file, cnf_index):
+def check_optimum_maxsat(x, cnf_file, cnf_index):
     file = 'prerequisites/' + cnf_file + '.npy'
     cnf_list = np.load(file)
     cnf = cnf_list[cnf_index]
-    calculate_fitness = fitness_calculation_maxsat(x, cnf)
-    return calculate_fitness
+    check_fitness = fitness_maxsat(x, cnf)
+    if check_fitness == True:
+        return True
+    else:
+        return False
 
 # the benchmark func has the following meaning. 0 is for onemax and 1 for twomax.
 # this can also be updated in the fitness and fitness_calculation method to add on more benchmark functions.
@@ -178,7 +181,7 @@ def immune_algorithm(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
         if check_fitness == True:
-            if not best in optimum_list:
+            if best not in optimum_list:
                 optimum_found += 1
                 optimum_list.append(best)
     else:
@@ -225,7 +228,7 @@ def immune_algorithm(input_data):
                     termination_condition = terminate_maxsat(run_time)
                     check_fitness = check_optimum_maxsat(best, cnf_list, cnf_index)
                     if check_fitness == True:
-                        if not best in optimum_list:
+                        if best not in optimum_list:
                             optimum_found += 1
                             optimum_list.append(best)
                 else:
