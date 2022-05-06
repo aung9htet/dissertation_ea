@@ -240,7 +240,7 @@ def immune_algorithm(input_data):
             # check for age threshold and probability to die set at 0.5
             if ((candidate[2] > age_threshold) and (decide_eliminate_candidate(0.5) == True)):
                 # reset the candidate and their age
-                reset_candidate = unif_initialization(n, None, None) # reinitialize
+                reset_candidate = unif_initialization(len(best), None, None) # reinitialize
                 x = (reset_candidate, x[0], 0) 
                 y = (reset_candidate, y[0], 0)
                 

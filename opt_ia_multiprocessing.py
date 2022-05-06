@@ -47,6 +47,8 @@ def check_optimum_maxsat(x, cnf_file, cnf_index):
     check_fitness = fitness_maxsat(x, cnf)
     if check_fitness == True:
         return True
+    else:
+        return False
 
 # fitness calculation for max sat
 def calculate_fitness_maxsat(x, cnf_file, cnf_index):
@@ -106,7 +108,7 @@ def mutation_operator(candidate, c, benchmark_func, run_time, optimum_found, cnf
             sys.stdout.write('Currently working on ' + str(run_time) + ' out of 100,000 runtime for ' +  str(cnf_index + 1) + 'th file out of ' + str(100) + ' files\n')
             sys.stdout.flush()
     if benchmark_func == 2:
-        return new_candidate, run_times, optimums_found, run_time, optimum_found
+        return new_candidate, run_times, optimums_found, run_time
     else:
         return new_candidate, run_time
 
@@ -146,7 +148,7 @@ def opt_ia(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
         if check_fitness == True:
-            if not current_candidate in optimum_list:
+            if current_candidate not in optimum_list:
                 optimum_found += 1
                 optimum_list.append(current_candidate)
     else:
@@ -155,7 +157,7 @@ def opt_ia(input_data):
 
     while (termination_condition == False):
         if benchmark_func == 2:
-            new_candidate, run_times, optimums_found, run_time, optimum_found = mutation_operator(current_candidate, c, benchmark_func, run_time, optimum_found, cnf_list, cnf_index, run_times, optimums_found)
+            new_candidate, run_times, optimums_found, run_time = mutation_operator(current_candidate, c, benchmark_func, run_time, optimum_found, cnf_list, cnf_index, run_times, optimums_found)
             new_fitness_candidate = calculate_fitness_maxsat(new_candidate, cnf_list, cnf_index)
             current_fitness_candidate = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
         else:
@@ -172,7 +174,7 @@ def opt_ia(input_data):
             termination_condition = terminate_maxsat(run_time)
             check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
             if check_fitness == True:
-                if not current_candidate in optimum_list:
+                if current_candidate not in optimum_list:
                     optimum_found += 1
                     optimum_list.append(current_candidate)
         else:

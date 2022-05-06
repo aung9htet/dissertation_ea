@@ -96,7 +96,7 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
             y_axis = np.load('results/symmetric_mexpoHD_uf75_optimum_list.npy')
             x_axis = np.load('results/symmetric_mexpoHD_uf75_run_time_list.npy')
 
-        elif (select_benchmark == "uf7250"):
+        elif (select_benchmark == "uf250"):
             y_axis = np.load('results/symmetric_mexpoHD_uf250_optimum_list.npy')
             x_axis = np.load('results/symmetric_mexpoHD_uf250_run_time_list.npy')
 
@@ -133,6 +133,7 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
     if (select_benchmark == "uf75") or (select_benchmark == "uf250"):
         plt.xlabel("run time")
         plt.ylabel("optimum found")
+        x_axis = np.log10(x_axis)
         plt.plot(x_axis, y_axis, label = select_method)
         plt.legend
     else:

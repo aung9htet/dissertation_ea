@@ -110,7 +110,7 @@ def ea(input_data):
         termination_condition = terminate_maxsat(run_time)
         check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
         if check_fitness == True:
-            if not current_candidate in optimum_list:
+            if current_candidate not in optimum_list:
                 optimum_found += 1
                 optimum_list.append(current_candidate)
     else:
@@ -132,7 +132,7 @@ def ea(input_data):
             termination_condition = terminate_maxsat(run_time)
             check_fitness = check_optimum_maxsat(current_candidate, cnf_list, cnf_index)
             if check_fitness == True:
-                if not current_candidate in optimum_list:
+                if current_candidate not in optimum_list:
                     optimum_found += 1
                     optimum_list.append(current_candidate)
         else:
