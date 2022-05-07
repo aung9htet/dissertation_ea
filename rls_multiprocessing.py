@@ -179,7 +179,7 @@ def rls(input_data):
         return run_time
 
 # get data ready to be input into the multiprocessing function. 0 is for uf75, 1 is for uf250
-def process_input_data(n, benchmark_func, repeat, max_runtime, cnf_file = 0):
+def process_input_data(n, benchmark_func, repeat, max_runtime = None, cnf_file = 0):
     
     # return array depends on maxsat or not
     if benchmark_func == 2:
@@ -310,4 +310,4 @@ def get_data(max_bit, repeat, max_runtime = 1000, benchmark_func = 0, multicore 
     
 # to run the desired code
 if __name__ == "__main__":
-    get_data(50, 1, benchmark_func = 2)
+    get_data(50, 1, max_runtime= 100000, benchmark_func = 2)
