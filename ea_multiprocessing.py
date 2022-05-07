@@ -17,7 +17,7 @@ def unif_initialization(n, cnf_list, cnf_index, initialise_single_candidate = Tr
         candidate_solution = ''.join(str(bit) for bit in bit_list)
     return candidate_solution
 
-# mutation operator
+# standard bit mutation operator
 def mutation_operator(candidate):
     n = len(candidate)
     probability_to_flip = 1/n
@@ -82,6 +82,7 @@ def ea(input_data):
     run_time = 1
     cnf_file = None
     cnf_index = None
+    cnf_list = None
 
     # set extra input data for maxsat
     if benchmark_func == 2:
@@ -119,6 +120,16 @@ def ea(input_data):
     if benchmark_func == 2:
         termination_condition = terminate_maxsat(run_time, current_candidate, cnf_list, cnf_index, max_runtime)
         current_best = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
+
+        # fill the data up
+        if termination_condition == True:
+            run_time += 1
+            optimum_found += 1
+            while run_time <= max_runtime:
+                run_times = np.append(run_times, run_time)
+                optimums_found = np.append(optimums_found, optimum_found)
+                best_fitness_lst = np.append(best_fitness_lst, current_best)
+                run_time += 1
     else:
         local_opt = 0
         termination_condition, local_opt = fitness(current_candidate, local_opt, benchmark_func)
@@ -151,7 +162,8 @@ def ea(input_data):
         # check if better candidate is found
         if new_fitness_candidate >= current_fitness_candidate:
             current_candidate = new_candidate
-            current_best = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
+            if benchmark_func == 2:
+                current_best = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
 
         # check for termination condition
         if benchmark_func == 2:
@@ -235,7 +247,7 @@ def ea_multiprocessing(n, benchmark_func, repeat, max_runtime = 1000, core = 6, 
     if benchmark_func == 2:
         prepare_data = process_input_data(n, benchmark_func, repeat, max_runtime, cnf_file)
     else:
-        prepare_data = process_input_data(n, benchmark_func, repeat)
+        prepare_data = process_input_data(n, benchmark_func, repeat, max_runtime = max_runtime)
     with multiprocessing.Pool(core) as pool:
         resultList = pool.map(ea, prepare_data)
 
@@ -257,7 +269,7 @@ def ea_multiprocessing(n, benchmark_func, repeat, max_runtime = 1000, core = 6, 
         return result
         
 # save data as npy while working as either multicore or singlecore (for only onemax and twomax)
-def get_data(max_bit, repeat, max_runtime = None, benchmark_func = 0, multicore = True, cnf_file = 0):
+def get_data(max_bit, repeat, max_runtime = 1000, benchmark_func = 0, multicore = True, cnf_file = 0):
     run_time_lst = np.array([])
     if benchmark_func == 2:
         sys.stdout.write('The process will work on maxsat')
