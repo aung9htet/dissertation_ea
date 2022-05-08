@@ -244,27 +244,28 @@ def immune_algorithm(input_data):
             if new_fitness_candidate >= best_fitness_candidate:
                 # set best solution
                 best = y[0]
-                
-                if benchmark_func == 2:
-                    current_best = calculate_fitness_maxsat(best, cnf_list, cnf_index)
-                    termination_condition = terminate_maxsat(run_time, best, cnf_list, cnf_index, max_runtime)
-        
-                    # fill the data up
-                    if termination_condition == True:
-                        run_time += 1
-                        optimum_found += 1
-                        while run_time <= max_runtime:
-                            run_times = np.append(run_times, run_time)
-                            optimums_found = np.append(optimums_found, optimum_found)
-                            best_fitness_lst = np.append(best_fitness_lst, current_best)
-                            run_time += 1
-                                
-                else:
-                    termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
         else:
             # set y age as x age 
             y = (y[0], y[1], x[2])
-        
+
+        # check termination condition
+        if benchmark_func == 2:
+            current_best = calculate_fitness_maxsat(best, cnf_list, cnf_index)
+            termination_condition = terminate_maxsat(run_time, best, cnf_list, cnf_index, max_runtime)
+
+            # fill the data up
+            if termination_condition == True:
+                run_time += 1
+                optimum_found += 1
+                while run_time <= max_runtime:
+                    run_times = np.append(run_times, run_time)
+                    optimums_found = np.append(optimums_found, optimum_found)
+                    best_fitness_lst = np.append(best_fitness_lst, current_best)
+                    run_time += 1
+                        
+        else:
+            termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
+            
         # aging mechanism for x and y
         collection_candidates = [x,y]
         for candidate in collection_candidates:

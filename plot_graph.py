@@ -69,6 +69,14 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
             y_axis = np.load('results/opt_ia_uf250_optimum_list.npy')
             x_axis = np.load('results/opt_ia_uf250_run_time_list.npy')
 
+        elif (select_benchmark == "uf75_fitness"):
+            y_axis = np.load('results/opt_ia_uf75_best_fitness_list.npy')[1:]
+            x_axis = np.load('results/opt_ia_uf75_run_time_list.npy')[1:]
+
+        elif (select_benchmark == "uf250_fitness"):
+            y_axis = np.load('results/opt_ia_uf250_best_fitness_list.npy')
+            x_axis = np.load('results/opt_ia_uf250_run_time_list.npy')
+
     # for symmetric mexpoHD
     elif (select_method == "symmetric_mexpoHD"):
 
@@ -130,7 +138,15 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
             y_axis = np.load('results/ea_uf250_optimum_list.npy')
             x_axis = np.load('results/ea_uf250_run_time_list.npy')
 
-    if (select_benchmark == "uf75") or (select_benchmark == "uf250"):
+        elif (select_benchmark == "uf75_fitness"):
+            y_axis = np.load('results/ea_uf75_best_fitness_list.npy')[1:]
+            x_axis = np.load('results/ea_uf75_run_time_list.npy')[1:]
+
+        elif (select_benchmark == "uf250_fitness"):
+            y_axis = np.load('results/ea_uf250_best_fitness_list.npy')
+            x_axis = np.load('results/ea_uf250_run_time_list.npy')
+
+    if (select_benchmark == "uf75") or (select_benchmark == "uf250") or (select_benchmark == "uf75_fitness") or (select_benchmark == "uf250_fitness"):
         plt.xlabel("run time")
         plt.ylabel("optimum found")
         x_axis = np.log10(x_axis)
@@ -166,6 +182,10 @@ if __name__ == "__main__":
     plot_graph("ea", "uf75")
     plt.figure()
     plot_graph("symmetric_mexpoHD", "uf75")
+    plt.figure()
+    plot_graph("ea", "uf75_fitness")
+    plt.figure()
+    plot_graph("opt_ia", "uf75_fitness")
     plt.figure()
     plot_graph("rls", "uf75", plot_later=True)
     plot_graph("opt_ia", "uf75", plot_later=True)
