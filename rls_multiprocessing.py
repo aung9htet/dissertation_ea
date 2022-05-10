@@ -160,7 +160,8 @@ def rls(input_data):
         # check for termination condition
         if benchmark_func == 2:
             termination_condition = terminate_maxsat(run_time, current_candidate, cnf_list, cnf_index, max_runtime)
-
+            current_best = calculate_fitness_maxsat(current_candidate, cnf_list, cnf_index)
+            
             # fill the data up
             if termination_condition == True:
                 run_time += 1
