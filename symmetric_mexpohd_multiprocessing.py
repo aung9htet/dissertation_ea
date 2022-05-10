@@ -285,6 +285,24 @@ def immune_algorithm(input_data):
             y_fitness_candidate = fitness_calculation(y[0], benchmark_func)
         if x_fitness_candidate < y_fitness_candidate:
             x = (y[0], x[1], x[2])
+
+        # check termination condition
+        if benchmark_func == 2:
+            current_best = calculate_fitness_maxsat(best, cnf_list, cnf_index)
+            termination_condition = terminate_maxsat(run_time, best, cnf_list, cnf_index, max_runtime)
+
+            # fill the data up
+            if termination_condition == True:
+                run_time += 1
+                optimum_found += 1
+                while run_time <= max_runtime:
+                    run_times = np.append(run_times, run_time)
+                    optimums_found = np.append(optimums_found, optimum_found)
+                    best_fitness_lst = np.append(best_fitness_lst, current_best)
+                    run_time += 1
+                        
+        else:
+            termination_condition, local_opt = fitness(best, local_opt, benchmark_func)
     if benchmark_func == 2:
         return run_times, optimums_found, best_fitness_lst
     else:
@@ -376,7 +394,7 @@ def symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, max_runtime 
         return result
 
 # save data as npy while working as either multicore or singlecore (for only onemax and twomax)
-def get_data(max_bit, c, repeat, max_runtime = 1000, benchmark_func = 0, multicore = True, cnf_file = 0):
+def get_data(max_bit, c, repeat, compare = None, max_runtime = 1000, benchmark_func = 0, multicore = True, cnf_file = 0):
     run_time_lst = np.array([])
     if benchmark_func == 2:
         sys.stdout.write('The process will work on maxsat')
@@ -405,6 +423,29 @@ def get_data(max_bit, c, repeat, max_runtime = 1000, benchmark_func = 0, multico
         best_fitness_file = "results/symmetric_mexpoHD_" + text + "_best_fitness_list.npy"
         data = np.asarray(best_fitness_total)
         np.save(best_fitness_file, data)
+    elif compare is not None:
+        for i in compare:
+            c = i
+            run_time_lst = np.array([])
+            sys.stdout.write('The process will go through ' + str(max_bit) + ' bits')
+            sys.stdout.flush()
+            for n in range(5, max_bit+1):
+                if multicore == True:
+                    run_time = symmetric_mexpoHD_multiprocessing(n, c, benchmark_func, repeat, core = 10)
+                else:
+                    run_time = symmetric_mexpoHD_singlecore(n, c, benchmark_func, repeat)
+                run_time_lst = np.append(run_time_lst, run_time)
+                #To check progress
+                sys.stdout.write(f"\r{' '*100}\r")
+                sys.stdout.flush()
+                sys.stdout.write('Currently working on ' + str(n) + 'th' + ' bit out of ' + str(max_bit) + ' bits')
+                sys.stdout.flush()
+            if benchmark_func == 0:
+                file = "results/symmetric_mexpoHD_onemax_c" + str(c) + "_results.npy"
+            else:
+                file = "results/symmetric_mexpoHD_twomax_c" + str(c) + "_results.npy"
+            data = np.asarray(run_time_lst)
+            np.save(file, data)
     else:
         sys.stdout.write('The process will go through ' + str(max_bit) + ' bits')
         sys.stdout.flush()
@@ -428,7 +469,7 @@ def get_data(max_bit, c, repeat, max_runtime = 1000, benchmark_func = 0, multico
 
 # to run the desired code
 if __name__ == "__main__":
-    get_data(75,5,1, max_runtime = 100000, benchmark_func=2)
+    get_data(50,5,1, max_runtime = 100000, benchmark_func=1, multicore=False)
     """
     print("Starting Onemax for Symmetric MexpoHD")
     get_data(50, 1, 100)

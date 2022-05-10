@@ -37,6 +37,14 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
         elif (select_benchmark == "uf250"):
             y_axis = np.load('results/rls_uf250_optimum_list.npy')
             x_axis = np.load('results/rls_uf250_run_time_list.npy')
+        
+        elif (select_benchmark == "uf75_fitness"):
+            y_axis = np.load('results/rls_uf75_best_fitness_list.npy')[1:]
+            x_axis = np.load('results/rls_uf75_run_time_list.npy')[1:]
+
+        elif (select_benchmark == "uf250_fitness"):
+            y_axis = np.load('results/rls_uf250_best_fitness_list.npy')
+            x_axis = np.load('results/rls_uf250_run_time_list.npy')
 
     # for opt ia with static hyper mutation operator
     elif (select_method == "opt_ia"):
@@ -77,6 +85,14 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
             y_axis = np.load('results/opt_ia_uf250_best_fitness_list.npy')
             x_axis = np.load('results/opt_ia_uf250_run_time_list.npy')
 
+        elif (select_benchmark == "uf75_fitness"):
+            y_axis = np.load('results/opt_ia_uf75_best_fitness_list.npy')[1:]
+            x_axis = np.load('results/opt_ia_uf75_run_time_list.npy')[1:]
+
+        elif (select_benchmark == "uf250_fitness"):
+            y_axis = np.load('results/opt_ia_uf250_best_fitness_list.npy')
+            x_axis = np.load('results/opt_ia_uf250_run_time_list.npy')
+
     # for symmetric mexpoHD
     elif (select_method == "symmetric_mexpoHD"):
 
@@ -106,6 +122,14 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
 
         elif (select_benchmark == "uf250"):
             y_axis = np.load('results/symmetric_mexpoHD_uf250_optimum_list.npy')
+            x_axis = np.load('results/symmetric_mexpoHD_uf250_run_time_list.npy')
+
+        elif (select_benchmark == "uf75_fitness"):
+            y_axis = np.load('results/symmetric_mexpoHD_uf75_best_fitness_list.npy')[1:]
+            x_axis = np.load('results/symmetric_mexpoHD_uf75_run_time_list.npy')[1:]
+
+        elif (select_benchmark == "uf250_fitness"):
+            y_axis = np.load('results/symmetric_mexpoHD_uf250_best_fitness_list.npy')
             x_axis = np.load('results/symmetric_mexpoHD_uf250_run_time_list.npy')
 
     elif (select_method == "ea"):
@@ -164,10 +188,9 @@ def plot_graph(select_method, select_benchmark, plot_later = False):
         plt.savefig(file, dpi=300, bbox_inches = "tight")
 
 if __name__ == "__main__":
+    # One max plot
     plt.figure()
     plot_graph("symmetric_mexpoHD", "onemax")
-    plt.figure()
-    plot_graph("symmetric_mexpoHD", "twomax")
     plt.figure()
     plot_graph("rls", "onemax")
     plt.figure()
@@ -175,6 +198,10 @@ if __name__ == "__main__":
     plt.figure()
     plot_graph("ea", "onemax")
     plt.figure()
+    # Two max plot
+    plot_graph("symmetric_mexpoHD", "twomax")
+    plt.figure()
+    # UF75 optimum found plot
     plot_graph("rls", "uf75")
     plt.figure()
     plot_graph("opt_ia", "uf75")
@@ -183,13 +210,29 @@ if __name__ == "__main__":
     plt.figure()
     plot_graph("symmetric_mexpoHD", "uf75")
     plt.figure()
+    # UF75 fitness plot
     plot_graph("ea", "uf75_fitness")
     plt.figure()
     plot_graph("opt_ia", "uf75_fitness")
     plt.figure()
+    plot_graph("rls", "uf75_fitness")
+    plt.figure()
+    plot_graph("symmetric_mexpoHD", "uf75_fitness")
+    plt.figure()
+    # UF75 optimum combined plot
     plot_graph("rls", "uf75", plot_later=True)
     plot_graph("opt_ia", "uf75", plot_later=True)
     plot_graph("ea", "uf75", plot_later=True)
     plot_graph("symmetric_mexpoHD", "uf75", plot_later=True)
+    plt.legend()
     file = "plotted_results/combined_results"
+    plt.savefig(file, dpi=300, bbox_inches = "tight")
+    # UF75 best_fitness combined plot
+    plt.figure()
+    plot_graph("rls", "uf75_fitness", plot_later=True)
+    plot_graph("opt_ia", "uf75_fitness", plot_later=True)
+    plot_graph("ea", "uf75_fitness", plot_later=True)
+    plot_graph("symmetric_mexpoHD", "uf75_fitness", plot_later=True)
+    plt.legend()
+    file = "plotted_results/combined_fitness_results"
     plt.savefig(file, dpi=300, bbox_inches = "tight")
